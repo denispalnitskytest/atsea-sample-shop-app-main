@@ -89,7 +89,7 @@ public class UnitTest {
 	public void whenProductIdIdProvided_theReturnedDescriptionIsIncorrect(){
 		Mockito.when(mockProductServiceImpl.findById(1l)).thenReturn(returnProduct);
 		String testDescription = returnProduct.getDescription();
-		Assert.assertNotEquals("a whale", testDescription);
+		Assert.assertNotEquals(testDescription, testDescription);
 	}
 	
 	// Test OrderService implementation
