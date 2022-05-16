@@ -14,10 +14,15 @@ outputs:
 runs:
   using: "composite"
   steps:  
-
     - name: Init vars
       shell: bash
       id: vars_step
       run: |
         echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+
+    - name: show
+      shell: bash
+      run: |
+        echo  ${{ steps.vars_step.outputs.sha_short }}
+        echo  ${{ steps.vars_step.outputs.branch }}
