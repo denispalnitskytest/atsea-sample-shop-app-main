@@ -1,0 +1,38 @@
+name: Java CI
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK 13
+      uses: actions/setup-java@v2
+      with:
+        java-version: '13'
+        distribution: 'adopt'
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Test with Maven
+      run: mvn test --file pom.xml
+
+    # Optional step to archive test results, assuming tests produce a report in XML format
+    - name: Archive test results
+      uses: actions/upload-artifact@v2
+      if: always() # Run this step even if previous steps failed
+      with:
+        name: test-results
+        path: '**/target/surefire-reports/*.xml' # Update this to the path where your test results are saved
+
+    # Optional step to publish test results to the GitHub check (must publish XML formatted test results)
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always() # This ensures that test results are always published, even if the Maven test command fails
+      with:
+        files: '**/target/surefire-reports/*.xml' # Update this to the path where your test results are saved
