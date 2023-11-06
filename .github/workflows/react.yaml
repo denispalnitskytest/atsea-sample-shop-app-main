@@ -20,7 +20,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: react-app/yarn.lock # for monorepos
+        cache-dependency-path: react-app/yarn.lock # for monorepos, 
 
     - name: Cache node_modules
       uses: actions/cache@v2      
@@ -31,7 +31,7 @@ jobs:
           ${{ runner.os }}-node-
 
     - name: Install dependencies
-      working-directory: react
+      working-directory: react-app
       run: npm ci
 
     - name: Run lint
@@ -39,11 +39,11 @@ jobs:
       run: npx eslint . --ext .ts --fix
 
     - name: Build
-      working-directory: react
+      working-directory: react-app
       run: npm run build
 
     - name: Run tests
-      working-directory: react
+      working-directory: react-app
       run: npx jest
 
     # Optional: Upload test results as an artifact (if your test framework generates report files)
