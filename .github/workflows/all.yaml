@@ -61,8 +61,17 @@ jobs:
     - name: Install ESLint
       run: npm install -g eslint 
 
+    - name: Create Default ESLint Config
+      run: |
+        echo '{"extends": "eslint:recommended", "env": {"browser": true, "es2021": true}}' > .eslintrc.json
+
+    # Run ESLint on the React project
+    - name: Run ESLint
+      run: eslint react-app/src/**/*.js
+
     # Run ESLint on the React project
     - name: Run ESLint for JavaScript/React linting
+    
       run: |
         eslint react-app/src/**/*.js --no-eslintrc --config "{ 'extends': 'eslint:recommended', 'env': { 'browser': true, 'es2021': true }, 'overrides': [ { 'files': ['*.jsx'], 'rules': {} } ] }"
       
