@@ -20,9 +20,16 @@ jobs:
       
     # Build and test Java application
     - name: Build and test with Maven
-      run: mvn clean verify
+      run: mvn clean verify      
       # Publish test results as annotations
       continue-on-error: true # To ensure that the next step (test reports) is run even if tests fail
+
+    - name: Run Checkstyle for Java linting
+      run: |
+        wget -O checkstyle-8.45-all.jar https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.45/checkstyle-8.45-all.jar
+        java -jar checkstyle-8.45-all.jar -c /google_checks.xml src
+        
+
     - name: Publish Test Results
       uses: actions/upload-artifact@v2
       if: always() # This step should always run even if the build step fails
