@@ -50,9 +50,14 @@ jobs:
     - name: Install Dependencies
       run: yarn --cwd react-app install
       
-    # Lint React application
-    - name: Lint
-      run: yarn --cwd react-app lint # Replace with your actual lint command if different
+    # Install ESLint (if not already installed)
+    - name: Install ESLint
+      run: npm install -g eslint 
+
+    # Run ESLint on the React project
+    - name: Run ESLint for JavaScript/React linting
+      run: |
+        eslint react-app/src/**/*.js
       
     # Test React application with output to annotations
     - name: Test
