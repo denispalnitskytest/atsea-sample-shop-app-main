@@ -20,7 +20,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: react-app/package-lock.json # for monorepos
+        cache-dependency-path: react-app/yarn.json # for monorepos
 
     - name: Cache node_modules
       uses: actions/cache@v2      
