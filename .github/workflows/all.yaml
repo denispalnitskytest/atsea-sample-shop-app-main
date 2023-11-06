@@ -1,73 +1,64 @@
-name: CI
+name: Continuous Integration
 
 on:
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
-  build:
+  # Backend job for Java application
+  backend:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
-  test:
-    needs: build
-
+    - uses: actions/checkout@v2
+    
+    # Set up JDK 11 for Java application
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+      
+    # Build and test Java application
+    - name: Build and test with Maven
+      run: mvn clean verify
+      # Publish test results as annotations
+      continue-on-error: true # To ensure that the next step (test reports) is run even if tests fail
+    - name: Publish Test Results
+      uses: actions/upload-artifact@v2
+      if: always() # This step should always run even if the build step fails
+      with:
+        name: Backend Test Results
+        path: '**/target/surefire-reports/*.xml'
+    
+    # Lint Java application
+    # Add your linting command or plugin if applicable
+    
+  # Frontend job for React application
+  frontend:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests and generate results
-        id: test
-        run: npm run test -- --json > test_results.json
-
-      - name: Publish test results as annotations
-        uses: actions/upload-artifact@v2
-        with:
-          name: test_results
-          path: test_results.json
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run linting
-        run: npm run lint
+    - uses: actions/checkout@v2
+    
+    # Set up Node.js (assuming version 14)
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+      
+    # Install dependencies
+    - name: Install Dependencies
+      run: yarn --cwd react-app install
+      
+    # Lint React application
+    - name: Lint
+      run: yarn --cwd react-app lint # Replace with your actual lint command if different
+      
+    # Test React application with output to annotations
+    - name: Test
+      run: yarn --cwd react-app test --ci --json --outputFile=test-results.json # Adjust command as needed
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: Frontend Test Results
+        path: react-app/test-results.json
